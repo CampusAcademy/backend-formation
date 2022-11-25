@@ -1,61 +1,25 @@
 const express = require('express');
-const Thing = require("../models/Thing");
 const router = express.Router();
+const stuffCtrl = require('../controllers/stuff');
 
 // GET
 // Liste tous les objets
-router.get('/', (req, res, next) => {
-
-    Thing.find()
-        .then(things => res.status(200).json(things))
-        .catch(error => res.status(400).json({ error } ))
-
-});
-
-// POST
-// Ajoute l'objet en base de donnée
-router.post('/', (req, res, next) => {
-
-    delete req.body._id;
-
-    const thing = new Thing({
-        ...req.body
-    });
-
-    thing.save()
-        .then(() => res.status(201).json({ message: "Objet enregistré !!" }) )
-        .catch(error => res.status(400).json({ error } ));
-
-});
+router.get('/', stuffCtrl.getAllStuff);
 
 // GET
 // Récupère et retourne un objet
-router.get('/:id', (req, res, next) => {
+router.get('/:id', stuffCtrl.getOneStuff);
 
-    Thing.findById(req.params.id)
-        .then(thing => res.status(200).json(thing))
-        .catch(error => res.status(400).json({ error }))
-
-});
+// POST
+// Ajoute l'objet en base de donnée
+router.post('/', stuffCtrl.createStuff);
 
 // PUT
 // Récupère et modifie un objet
-router.put('/:id', (req, res, next) => {
-
-    Thing.updateOne({_id: req.params.id }, { ...req.body, _id: req.params.id } )
-        .then(() => res.status(200).json({ message: "Objet modifié !" }))
-        .catch(error => res.status(400).json({ error } ))
-
-});
+router.put('/:id', stuffCtrl.updateStuff);
 
 // DELETE
 // Supprime un objet de la base de donnée
-router.delete('/:id', (req, res, next) => {
-
-    Thing.deleteOne( {_id: req.params.id })
-        .then(() => res.status(200).json({ message: "Objet supprimé !" }))
-        .catch(error => res.status(400).json({ error } ))
-
-});
+router.delete('/:id', stuffCtrl.deleteStuff);
 
 module.exports = router;
